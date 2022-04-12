@@ -150,7 +150,6 @@ if __name__ == "__main__":
             score_board[player_won] = score_board[player_won] + 1
  
         print_scoreboard(score_board)
-        # Switch player who chooses X or O
         if cur_player == player1:
             cur_player = player2
         else:
