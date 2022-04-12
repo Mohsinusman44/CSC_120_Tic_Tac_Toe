@@ -1,125 +1,138 @@
 
-import random
-
-
-class TicTacToe:
-
-    def __init__(self):
-        self.board = []
-
-    def create_board(self):
-        for i in range(3):
-            row = []
-            for j in range(3):
-                row.append('-')
-            self.board.append(row)
-
-    def get_random_first_player(self):
-        return random.randint(0, 1)
-
-    def fix_spot(self, row, col, player):
-        self.board[row][col] = player
-
-    def is_player_win(self, player):
-        win = None
-
-        n = len(self.board)
-
-        
-        for i in range(n):
-            win = True
-            for j in range(n):
-                if self.board[i][j] != player:
-                    win = False
-                    break
-            if win:
-                return win
-
-        
-        for i in range(n):
-            win = True
-            for j in range(n):
-                if self.board[j][i] != player:
-                    win = False
-                    break
-            if win:
-                return win
-
-        
-        win = True
-        for i in range(n):
-            if self.board[i][i] != player:
-                win = False
-                break
-        if win:
-            return win
-
-        win = True
-        for i in range(n):
-            if self.board[i][n - 1 - i] != player:
-                win = False
-                break
-        if win:
-            return win
-        return False
-
-        for row in self.board:
-            for item in row:
-                if item == '-':
-                    return False
-        return True
-
-    def is_board_filled(self):
-        for row in self.board:
-            for item in row:
-                if item == '-':
-                    return False
-        return True
-
-    def swap_player_turn(self, player):
-        return 'X' if player == 'O' else 'O'
-
-    def show_board(self):
-        for row in self.board:
-            for item in row:
-                print(item, end=" ")
-            print()
-
-    def start(self):
-        self.create_board()
-
-        player = 'X' if self.get_random_first_player() == 1 else 'O'
-        while True:
-            print(f"Player {player} turn")
-
-            self.show_board()
-
-            
-            row, col = list(
-                map(int, input("Enter row and column numbers to fix spot: ").split()))
-            print()
-
-            
-            self.fix_spot(row - 1, col - 1, player)
-
-            
-            if self.is_player_win(player):
-                print(f"Player {player} wins the game!")
-                break
-
-            
-            if self.is_board_filled():
-                print("Match Draw!")
-                break
-
-            
-            player = self.swap_player_turn(player)
-
-        
-        print()
-        self.show_board()
-
-
-
-tic_tac_toe = TicTacToe()
-tic_tac_toe.start()
+ 
+# Function for a single game of Tic Tac Toe
+def single_game(cur_player):
+ 
+    # Represents the Tic Tac Toe
+    values = [' ' for x in range(9)]
+     
+    # Stores the positions occupied by X and O
+    player_pos = {'X':[], 'O':[]}
+     
+    # Game Loop for a single game of Tic Tac Toe
+    while True:
+        print_tic_tac_toe(values)
+         
+        # Try exception block for MOVE input
+        try:
+            print("Player ", cur_player, " turn. Which box? : ", end="")
+            move = int(input()) 
+        except ValueError:
+            print("Wrong Input!!! Try Again")
+            continue
+ 
+        # Sanity check for MOVE inout
+        if move < 1 or move > 9:
+            print("Wrong Input!!! Try Again")
+            continue
+ 
+        # Check if the box is not occupied already
+        if values[move-1] != ' ':
+            print("Place already filled. Try again!!")
+            continue
+ 
+        # Update game information
+ 
+        # Updating grid status 
+        values[move-1] = cur_player
+ 
+        # Updating player positions
+        player_pos[cur_player].append(move)
+ 
+        # Function call for checking win
+        if check_win(player_pos, cur_player):
+            print_tic_tac_toe(values)
+            print("Player ", cur_player, " has won the game!!")     
+            print("\n")
+            return cur_player
+ 
+        # Function call for checking draw game
+        if check_draw(player_pos):
+            print_tic_tac_toe(values)
+            print("Game Drawn")
+            print("\n")
+            return 'D'
+ 
+        # Switch player moves
+        if cur_player == 'X':
+            cur_player = 'O'
+        else:
+            cur_player = 'X'
+ 
+if __name__ == "__main__":
+ 
+    print("Player 1")
+    player1 = input("Enter the name : ")
+    print("\n")
+ 
+    print("Player 2")
+    player2 = input("Enter the name : ")
+    print("\n")
+     
+    # Stores the player who chooses X and O
+    cur_player = player1
+ 
+    # Stores the choice of players
+    player_choice = {'X' : "", 'O' : ""}
+ 
+    # Stores the options
+    options = ['X', 'O']
+ 
+    # Stores the scoreboard
+    score_board = {player1: 0, player2: 0}
+    print_scoreboard(score_board)
+ 
+    # Game Loop for a series of Tic Tac Toe
+    # The loop runs until the players quit 
+    while True:
+ 
+        # Player choice Menu
+        print("Turn to choose for", cur_player)
+        print("Enter 1 for X")
+        print("Enter 2 for O")
+        print("Enter 3 to Quit")
+ 
+        # Try exception for CHOICE input
+        try:
+            choice = int(input())   
+        except ValueError:
+            print("Wrong Input!!! Try Again\n")
+            continue
+ 
+        # Conditions for player choice  
+        if choice == 1:
+            player_choice['X'] = cur_player
+            if cur_player == player1:
+                player_choice['O'] = player2
+            else:
+                player_choice['O'] = player1
+ 
+        elif choice == 2:
+            player_choice['O'] = cur_player
+            if cur_player == player1:
+                player_choice['X'] = player2
+            else:
+                player_choice['X'] = player1
+         
+        elif choice == 3:
+            print("Final Scores")
+            print_scoreboard(score_board)
+            break  
+ 
+        else:
+            print("Wrong Choice!!!! Try Again\n")
+ 
+        # Stores the winner in a single game of Tic Tac Toe
+        winner = single_game(options[choice-1])
+         
+        # Edits the scoreboard according to the winner
+        if winner != 'D' :
+            player_won = player_choice[winner]
+            score_board[player_won] = score_board[player_won] + 1
+ 
+        print_scoreboard(score_board)
+        # Switch player who chooses X or O
+        if cur_player == player1:
+            cur_player = player2
+        else:
+            cur_player = player1
